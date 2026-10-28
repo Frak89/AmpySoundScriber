@@ -1,0 +1,11 @@
+.gradle/
+build/
+build-verify/
+local.properties
+.idea/
+*.iml
+.DS_Store
+captures/
+.externalNativeBuild/
+.cxx/
+testdata/out/

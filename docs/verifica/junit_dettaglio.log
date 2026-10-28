@@ -1,0 +1,109 @@
+== build-verify/ampy-audio-engine/test.log
+JUnit version 4.13.2
+..........
+Time: 5.957
+
+OK (10 tests)
+
+== build-verify/ampy-composer-ai/test.log
+JUnit version 4.13.2
+....
+Time: 0.318
+
+OK (4 tests)
+
+== build-verify/ampy-core/test.log
+JUnit version 4.13.2
+......
+Time: 0.077
+
+OK (6 tests)
+
+== build-verify/ampy-diagnostics/test.log
+JUnit version 4.13.2
+...
+Time: 0.203
+
+OK (3 tests)
+
+== build-verify/ampy-instrument-ai/test.log
+JUnit version 4.13.2
+...
+Time: 0.088
+
+OK (3 tests)
+
+== build-verify/ampy-learning-lab/test.log
+JUnit version 4.13.2
+.[INFO] TRANSCRIPTION/tuner: Profilo PIANO: F1 0.788 -> 0.892 su 1 casi
+Adattamento: F1 0.7875 -> 0.8919 (75 combinazioni)
+..Basic Pitch su brano sintetico di prova:
+Note F1 (onset+altezza):        P=0.670 R=0.955 F1=0.788 (63/66 ref, 94 stim.)
+Note F1 con offset:             P=0.415 R=0.591 F1=0.488 (39/66 ref, 94 stim.)
+Onset F1:                       P=0.702 R=1.000 F1=0.825 (66/66 ref, 94 stim.)
+Offset F1:                      P=0.670 R=0.955 F1=0.788 (63/66 ref, 94 stim.)
+Accuratezza altezze:            0.955 (croma 1.000)
+Errore medio di onset:          7.7 ms
+
+..[INFO] TRANSCRIPTION/learning: Correzione salvata fb-1793201855484-235835: F1 della trascrizione rispetto alla correzione 0.333
+
+Time: 1.119
+
+OK (5 tests)
+
+== build-verify/ampy-midi-lab/test.log
+JUnit version 4.13.2
+.....
+Time: 0.274
+
+OK (5 tests)
+
+== build-verify/ampy-model-manager/test.log
+JUnit version 4.13.2
+...[INFO] MODEL/registry: Installato bp (0 KB, sha256 a8af099bf2e878609558dbf69d8f88f4a31040a8cf84b549a0cfa912f12ffc3f)
+.
+Time: 0.124
+
+OK (4 tests)
+
+== build-verify/ampy-music-brain/test.log
+JUnit version 4.13.2
+.......
+Time: 0.097
+
+OK (7 tests)
+
+== build-verify/ampy-rhythm-lab/test.log
+JUnit version 4.13.2
+......
+Time: 0.39
+
+OK (6 tests)
+
+== build-verify/ampy-score-engine/test.log
+JUnit version 4.13.2
+...
+Time: 0.228
+
+OK (3 tests)
+
+== build-verify/ampy-separator/test.log
+JUnit version 4.13.2
+.[INFO] SEPARATION/separability: nessun problema rilevato
+.[INFO] SEPARATION/separability: La separazione DSP divide componenti armoniche e percussive: voce, chitarra e pianoforte restano insieme nella componente armonica. Per isolare singoli strumenti installare un modello neurale dal Gestore modelli. | Banda bassa (filtro): energia molto bassa (-118 dB), probabilmente assente nel brano.
+.[INFO] SEPARATION/separability: Chitarra e Pianoforte non sono separabili con affidabilit? (sovrapposizione spettrale 100%).
+.[INFO] SEPARATION/separability: Batteria e Altro non sono separabili con affidabilit? (sovrapposizione spettrale 100%).
+
+Time: 1.014
+
+OK (4 tests)
+
+== build-verify/ampy-transcriber/test.log
+JUnit version 4.13.2
+.[INFO] TRANSCRIPTION/basicpitch: Ripresa dal checkpoint: finestra 6/9
+[INFO] TIMING/basicpitch: Inferenza 0.02 s per 9 finestre (CPU)
+.....
+Time: 1.452
+
+OK (6 tests)
+

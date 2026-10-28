@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AmpyScore</title>
+<style>
+  :root { --fg: #111; --bg: #fff; --accent: #e91e63; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg); font-family: sans-serif; }
+  #status { padding: 8px 12px; font-size: 13px; opacity: .7; }
+  #pages { padding: 4px; }
+  .page { background: var(--bg); margin: 0 auto 12px; }
+  .page svg { width: 100%; height: auto; display: block; }
+  /* colori della partitura seguono il tema */
+  .page svg g, .page svg path, .page svg use, .page svg text, .page svg rect, .page svg polygon, .page svg ellipse { fill: var(--fg); stroke: var(--fg); }
+  .page svg .staff path, .page svg .ledgerLines path, .page svg .stem path { fill: none; }
+  .page svg .playing, .page svg .playing * { fill: var(--accent) !important; stroke: var(--accent) !important; }
+  .page svg .selected, .page svg .selected * { fill: #2196f3 !important; stroke: #2196f3 !important; }
+  @media print {
+    #status { display: none; }
+    .page { page-break-after: always; margin: 0; }
+    :root { --fg: #000; --bg: #fff; }
+  }
+</style>
+</head>
+<body>
+<div id="status">Caricamento motore di notazione…</div>
+<div id="pages"></div>
+<script src="verovio-toolkit-wasm.js"></script>
+<script>
+  'use strict';
+  // Ponte verso Android (iniettato con addJavascriptInterface). In un browser normale è assente.
+  const bridge = window.AmpyBridge || { onReady(){}, onLoaded(){}, onError(m){ console.error(m); }, onNoteTapped(){} };
+  let tk = null, pageCount = 0, playing = [], mode = 'page', currentPage = 1, ready = false, pending = null;
+
+  function status(t) { document.getElementById('status').textContent = t || ''; }
+
+  verovio.module.onRuntimeInitialized = function () {
+    tk = new verovio.toolkit();
+    ready = true;
+    status('');
+    bridge.onReady(tk.getVersion());
+    if (pending) { const p = pending; pending = null; ampyLoad(p.xml, p.opts); }
+  };
+
+  function baseOptions(o) {
+    const w = Math.max(320, window.innerWidth - 8);
+    return Object.assign({
+      pageWidth: Math.round(w * 100 / (o.scale || 40)),
+      pageHeight: 60000,
+      scale: o.scale || 40,
+      adjustPageHeight: true,
+      breaks: 'auto',
+      footer: 'none',
+      header: 'auto',
+      svgViewBox: true,
+      svgHtml5: true,
+      mnumInterval: 1,
+    }, o.extra || {});
+  }
+
+  /** Carica un MusicXML e lo renderizza. opts: {scale, theme:{fg,bg,accent}, print:boolean} */
+  function ampyLoad(xml, opts) {
+    opts = opts || {};
+    if (!ready) { pending = { xml, opts }; return; }
+    try {
+      if (opts.theme) ampyTheme(opts.theme.fg, opts.theme.bg, opts.theme.accent);
+      const o = baseOptions(opts);
+      if (opts.print) { o.pageWidth = 2100; o.pageHeight = 2970; o.adjustPageHeight = false; o.scale = 40; o.footer = 'auto'; }
+      tk.setOptions(o);
+      if (!tk.loadData(xml)) throw new Error('Verovio non è riuscito a leggere il MusicXML');
+      pageCount = tk.getPageCount();
+      const pages = document.getElementById('pages');
+      pages.innerHTML = '';
+      for (let i = 1; i <= pageCount; i++) {
+        const d = document.createElement('div');
+        d.className = 'page'; d.dataset.page = i;
+        d.innerHTML = tk.renderToSVG(i);
+        pages.appendChild(d);
+      }
+      attachTapHandlers();
+      bridge.onLoaded(pageCount);
+      return pageCount;
+    } catch (e) {
+      status('Errore: ' + e.message);
+      bridge.onError(String(e && e.message || e));
+      return -1;
+    }
+  }
+
+  function attachTapHandlers() {
+    document.querySelectorAll('.page svg g.note').forEach(n => {
+      n.addEventListener('click', ev => {
+        ev.stopPropagation();
+        document.querySelectorAll('.selected').forEach(x => x.classList.remove('selected'));
+        n.classList.add('selected');
+        const t = tk.getTimeForElement(n.id);
+        bridge.onNoteTapped(n.id, typeof t === 'number' ? t : -1);
+      });
+    });
+  }
+
+  /** Cursore sincronizzato: evidenzia le note che suonano al tempo [ms] e scorre fino ad esse. */
+  function ampySetTime(ms) {
+    if (!tk || !pageCount) return;
+    const els = tk.getElementsAtTime(Math.max(0, Math.round(ms)));
+    const ids = (els && els.notes) || [];
+    if (ids.join() === playing.join()) return;
+    playing.forEach(id => { const e = document.getElementById(id); if (e) e.classList.remove('playing'); });
+    playing = ids;
+    let first = null;
+    ids.forEach(id => { const e = document.getElementById(id); if (e) { e.classList.add('playing'); if (!first) first = e; } });
+    if (first) {
+      const r = first.getBoundingClientRect();
+      if (r.top < 40 || r.bottom > window.innerHeight - 40) window.scrollBy({ top: r.top - window.innerHeight / 3, behavior: 'smooth' });
+    }
+    return ids.length;
+  }
+
+  function ampyTheme(fg, bg, accent) {
+    const s = document.documentElement.style;
+    if (fg) s.setProperty('--fg', fg);
+    if (bg) s.setProperty('--bg', bg);
+    if (accent) s.setProperty('--accent', accent);
+  }
+
+  function ampyMidiBase64() { return tk ? tk.renderToMIDI() : ''; }
+  function ampyTimemap() { return tk ? JSON.stringify(tk.renderToTimemap({ includeMeasures: true })) : '[]'; }
+
+  window.ampyLoad = ampyLoad; window.ampySetTime = ampySetTime; window.ampyTheme = ampyTheme;
+  window.ampyMidiBase64 = ampyMidiBase64; window.ampyTimemap = ampyTimemap;
+</script>
+</body>
+</html>

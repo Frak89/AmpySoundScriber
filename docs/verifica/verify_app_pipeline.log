@@ -1,0 +1,38 @@
+[INFO] MODEL/registry: Installato basic-pitch-icassp2022 (225 KB, sha256 2c3c1d144bfa61ad236e92e169c13535c880469a12a047d4e73451f2c059a0ec)
+[INFO] PROJECT/repo: Progetto salvato: p20261028-163747-915
+ok  progetto creato con la traccia del mix
+[INFO] TIMING/basicpitch: Inferenza 0.29 s per 9 finestre (CPU)
+[INFO] TRANSCRIPTION/pipeline: Mix originale: 94 note
+ok  avanzamento reale e monotono (ultimo 1.00)
+Note F1 (onset+altezza):        P=0.670 R=0.955 F1=0.788 (63/66 ref, 94 stim.)
+Note F1 con offset:             P=0.415 R=0.591 F1=0.488 (39/66 ref, 94 stim.)
+Onset F1:                       P=0.702 R=1.000 F1=0.825 (66/66 ref, 94 stim.)
+Offset F1:                      P=0.670 R=0.955 F1=0.788 (63/66 ref, 94 stim.)
+Accuratezza altezze:            0.955 (croma 1.000)
+Errore medio di onset:          7.7 ms
+Tempo di esecuzione:            4540 ms
+
+ok  Note F1 della pipeline completa > 0.7 (misurata 0.788)
+ok  stesso numero di note dell'implementazione Python (94 vs 94)
+[INFO] SEPARATION/separability: La separazione DSP divide componenti armoniche e percussive: voce, chitarra e pianoforte restano insieme nella componente armonica. Per isolare singoli strumenti installare un modello neurale dal Gestore modelli.
+[INFO] SEPARATION/pipeline: Separazione DSP: armonico / percussivo (veloce, senza modelli): 3 stem; avvisi: 1
+ok  stem creati e mix silenziato
+[INFO] TRANSCRIPTION/analysis: Tempo stimato: 150.6 BPM @ 0s
+Tonalit?: Do maggiore; tempo: 150.6 BPM; accordi: C, Am7, Dm7/F, Fmaj7, G7, C, Am/C, Am
+ok  tonalit? Do maggiore riconosciuta
+ok  tempo plausibile (riferimento 100 BPM): 150.57
+ok  accordi riconosciuti
+[INFO] PROJECT/repo: Progetto salvato: p20261028-163747-915
+ok  salvataggio e recupero autosave
+ok  export MIDI: 911 byte
+ok  export MusicXML: 14294 byte
+ok  export Tablatura (testo): 37 byte
+ok  export WAV (ricostruzione sonora): 2698964 byte
+ok  export Progetto AmpySoundScriber: 24007 byte
+ok  tablatura della singola traccia
+ok  WAV dello stem con durata originale
+[INFO] PROJECT/repo: Progetto salvato: p20261028-163753-473
+ok  composizione di 306 s con 6 tracce
+chiamate al modello: 3
+E2E COMPLETATO
+E2E EXIT 0

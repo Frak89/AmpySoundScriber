@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Il tema visivo vero e proprio è in Compose (ui/theme): questo evita solo il flash iniziale. -->
+    <style name="Theme.Ampy" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/ampy_background</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+    <color name="ampy_background">#FF0B0D12</color>
+    <color name="ampy_accent">#FFFF2E88</color>
+</resources>

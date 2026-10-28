@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Icona originale: onda sonora che diventa pentagramma con una nota -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:strokeColor="#FF00E5FF" android:strokeWidth="2.5" android:strokeLineCap="round"
+        android:pathData="M26,54 L32,54 L35,42 L39,66 L43,36 L47,72 L51,48 L54,54" />
+    <path android:strokeColor="#FFFFFFFF" android:strokeWidth="1.6"
+        android:pathData="M56,44 L84,44 M56,50 L84,50 M56,56 L84,56 M56,62 L84,62 M56,68 L84,68" />
+    <path android:fillColor="#FFFF2E88"
+        android:pathData="M70,59 m-5,0 a5,4 0,1 0,10 0 a5,4 0,1 0,-10 0" />
+    <path android:strokeColor="#FFFF2E88" android:strokeWidth="2.2"
+        android:pathData="M74.5,58 L74.5,36 L80,39" />
+</vector>

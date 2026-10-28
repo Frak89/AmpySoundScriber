@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AmpySoundScriber</string>
+    <string name="channel_processing">Elaborazioni audio</string>
+    <string name="channel_processing_desc">Avanzamento di separazione, trascrizione e composizione</string>
+</resources>
