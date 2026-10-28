@@ -1,0 +1,74 @@
+name: Build AmpySoundScriber APK
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  android-apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      # AGP 9.2 richiede JDK >= 17; Gradle 9.4 gira bene con 21
+      - name: Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      # Nessuna action di terze parti: i runner ubuntu-latest hanno già l'SDK con cmdline-tools in $ANDROID_HOME.
+      # Si stampa tutto, così in caso di errore il log mostra la causa.
+      - name: Android SDK (API 37 + Build-Tools 37)
+        shell: bash
+        run: |
+          set -euxo pipefail
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          SDKM=$(ls "$ANDROID_HOME"/cmdline-tools/*/bin/sdkmanager | sort -V | tail -1)
+          echo "SDKM=$SDKM" >> "$GITHUB_ENV"
+          yes | "$SDKM" --licenses > /dev/null || true
+          "$SDKM" --list > sdk-list.txt 2>&1 || true
+          grep -E "platforms;android-3[6-9]|build-tools;3[6-9]" sdk-list.txt | sort -u || true
+          # nome del pacchetto: android-37 (stabile) oppure android-37.0 / preview, a seconda del canale
+          PLATFORM=$(grep -oE "platforms;android-37(\.[0-9]+)?" sdk-list.txt | sort -V | tail -1 || true)
+          if [ -z "$PLATFORM" ]; then
+            # non ancora sul canale stabile: si cerca sul canale beta
+            "$SDKM" --channel=1 --list > sdk-list.txt 2>&1 || true
+            PLATFORM=$(grep -oE "platforms;android-(37|CinnamonBun)[A-Za-z0-9.-]*" sdk-list.txt | sort -V | tail -1 || true)
+            SDKM_CHANNEL="--channel=1"
+          fi
+          BT=$(grep -oE "build-tools;37\.[0-9]+\.[0-9]+(-rc[0-9]+)?" sdk-list.txt | sort -V | tail -1 || true)
+          [ -n "$BT" ] || BT=$(grep -oE "build-tools;36\.[0-9]+\.[0-9]+" sdk-list.txt | sort -V | tail -1 || true)
+          echo "Installo: $PLATFORM $BT"
+          test -n "$PLATFORM"
+          yes | "$SDKM" ${SDKM_CHANNEL:-} --install "$PLATFORM" "$BT" "platform-tools"
+          ls "$ANDROID_HOME/platforms" "$ANDROID_HOME/build-tools"
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+
+      - name: Gradle wrapper eseguibile
+        run: chmod +x gradlew
+
+      - name: Test dei moduli
+        run: ./gradlew --no-daemon --stacktrace test
+
+      - name: Assemble debug APK
+        run: ./gradlew --no-daemon --stacktrace :app:assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: AmpySoundScriber-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+
+      - name: Upload log di build in caso di errore
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-reports
+          path: |
+            sdk-list.txt
+            **/build/reports/**
+          if-no-files-found: ignore
