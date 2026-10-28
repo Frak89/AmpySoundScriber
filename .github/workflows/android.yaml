@@ -28,7 +28,10 @@ jobs:
           echo "ANDROID_HOME=$ANDROID_HOME"
           SDKM=$(ls "$ANDROID_HOME"/cmdline-tools/*/bin/sdkmanager | sort -V | tail -1)
           echo "SDKM=$SDKM" >> "$GITHUB_ENV"
-          yes | "$SDKM" --licenses > /dev/null || true
+          # Evita SIGPIPE di yes con Bash pipefail quando sdkmanager termina normalmente.
+          set +o pipefail
+          yes | "$SDKM" --licenses > /dev/null
+          set -o pipefail
           "$SDKM" --list > sdk-list.txt 2>&1 || true
           grep -E "platforms;android-3[6-9]|build-tools;3[6-9]" sdk-list.txt | sort -u || true
           # nome del pacchetto: android-37 (stabile) oppure android-37.0 / preview, a seconda del canale
@@ -43,7 +46,7 @@ jobs:
           [ -n "$BT" ] || BT=$(grep -oE "build-tools;36\.[0-9]+\.[0-9]+" sdk-list.txt | sort -V | tail -1 || true)
           echo "Installo: $PLATFORM $BT"
           test -n "$PLATFORM"
-          yes | "$SDKM" ${SDKM_CHANNEL:-} --install "$PLATFORM" "$BT" "platform-tools"
+          "$SDKM" ${SDKM_CHANNEL:-} --install "$PLATFORM" "$BT" "platform-tools" < /dev/null
           ls "$ANDROID_HOME/platforms" "$ANDROID_HOME/build-tools"
           echo "sdk.dir=$ANDROID_HOME" > local.properties
 
